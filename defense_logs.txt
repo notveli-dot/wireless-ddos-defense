@@ -1,0 +1,126 @@
+2026-07-08 14:47:18,468 | INFO     | ML Models status: {'random_forest': False, 'svm': False, 'isolation_forest': False, 'xgboost': False}
+2026-07-08 14:47:18,469 | INFO     | ML models not trained. Entering training mode...
+2026-07-08 14:47:18,470 | INFO     | ============================================================
+2026-07-08 14:47:18,470 | INFO     | WIRELESS NETWORK DEFENSE SYSTEM INITIALIZED
+2026-07-08 14:47:18,471 | INFO     | ============================================================
+2026-07-08 14:47:18,471 | INFO     | Interface: wlan0
+2026-07-08 14:47:18,472 | INFO     | ML Enabled: True
+2026-07-08 14:47:18,472 | INFO     | ML Models: ['random_forest', 'svm', 'isolation_forest', 'xgboost']
+2026-07-08 14:47:18,473 | INFO     | ============================================================
+2026-07-08 14:47:18,473 | INFO     | ============================================================
+2026-07-08 14:47:18,474 | INFO     | DEFENSE SYSTEM STARTED
+2026-07-08 14:47:18,475 | INFO     | ============================================================
+2026-07-08 14:47:18,476 | ERROR    | Capture setup failed: module 'socket' has no attribute 'AF_PACKET'
+2026-07-08 14:47:18,477 | INFO     | Running SIMULATION MODE
+2026-07-08 14:47:18,478 | INFO     | All threads started. System is ACTIVE.
+2026-07-08 14:47:18,479 | INFO     | Press Ctrl+C to stop.
+2026-07-08 14:47:19,072 | CRITICAL |    Details: {
+  "packet_count": 51
+}
+2026-07-08 14:47:19,203 | CRITICAL |    Details: {
+  "packet_count": 51
+}
+2026-07-08 14:47:19,850 | CRITICAL |    Details: {
+  "packet_count": 51
+}
+2026-07-08 14:47:19,992 | CRITICAL |    Details: {
+  "syn_count": 101,
+  "target_port": 80
+}
+2026-07-08 14:47:19,993 | INFO     | Applying mitigation for SYN_FLOOD from 10.0.0.15
+2026-07-08 14:47:20,036 | INFO     | Attack report saved: attack_report_1783518440.json
+2026-07-08 14:47:20,863 | CRITICAL |    Details: {
+  "packet_count": 51
+}
+2026-07-08 14:47:21,283 | INFO     | Training ML models with 1000 samples...
+2026-07-08 14:47:21,285 | INFO     | Training random_forest...
+2026-07-08 14:47:21,285 | INFO     | Training Random Forest on 1000 samples...
+2026-07-08 14:47:22,606 | INFO     | Random Forest CV accuracy: 0.995
+2026-07-08 14:47:22,615 | INFO     | RandomForest model saved
+2026-07-08 14:47:22,616 | INFO     | Training svm...
+2026-07-08 14:47:22,617 | INFO     | Training SVM on 1000 samples...
+2026-07-08 14:47:22,746 | INFO     | SVM model saved
+2026-07-08 14:47:22,746 | INFO     | SVM trained successfully
+2026-07-08 14:47:22,747 | INFO     | Training isolation_forest...
+2026-07-08 14:47:22,747 | INFO     | Training Isolation Forest on 1000 samples...
+2026-07-08 14:47:22,917 | INFO     | IsolationForest model saved
+2026-07-08 14:47:22,918 | INFO     | Training xgboost...
+2026-07-08 14:47:22,918 | INFO     | Training XGBoost on 1000 samples...
+2026-07-08 14:47:23,314 | INFO     | XGBoost CV accuracy: 0.935
+2026-07-08 14:47:23,322 | INFO     | XGBoost model saved
+2026-07-08 14:47:23,322 | INFO     | ML models trained! Detection mode active.
+2026-07-08 14:47:36,538 | CRITICAL |    Details: {
+  "syn_count": 101,
+  "target_port": 80
+}
+2026-07-08 14:47:36,538 | INFO     | Applying mitigation for SYN_FLOOD from 10.0.0.11
+2026-07-08 14:47:36,575 | INFO     | Attack report saved: attack_report_1783518456.json
+2026-07-08 14:47:40,126 | CRITICAL |    Details: {
+  "packet_count": 51
+}
+2026-07-08 14:47:44,610 | CRITICAL |    Details: {
+  "packet_count": 51
+}
+2026-07-08 14:47:46,811 | CRITICAL |    Details: {
+  "packet_count": 51
+}
+2026-07-08 14:48:16,824 | CRITICAL |    Details: {
+  "syn_count": 101,
+  "target_port": 80
+}
+2026-07-08 14:48:16,824 | INFO     | Applying mitigation for SYN_FLOOD from 10.0.0.1
+2026-07-08 14:48:16,855 | INFO     | Attack report saved: attack_report_1783518496.json
+2026-07-08 14:49:26,062 | CRITICAL |    Details: {
+  "packet_count": 51
+}
+2026-07-08 14:49:30,506 | CRITICAL |    Details: {
+  "packet_count": 51
+}
+2026-07-08 14:49:33,689 | CRITICAL |    Details: {
+  "packet_count": 51
+}
+2026-07-08 14:49:46,685 | CRITICAL |    Details: {
+  "packet_count": 51
+}
+2026-07-08 14:49:52,320 | CRITICAL |    Details: {
+  "syn_count": 101,
+  "target_port": 80
+}
+2026-07-08 14:49:52,321 | INFO     | Applying mitigation for SYN_FLOOD from 10.0.0.18
+2026-07-08 14:49:52,351 | INFO     | Attack report saved: attack_report_1783518592.json
+2026-07-08 14:49:58,992 | CRITICAL |    Details: {
+  "syn_count": 101,
+  "target_port": 80
+}
+2026-07-08 14:49:58,993 | INFO     | Applying mitigation for SYN_FLOOD from 10.0.0.3
+2026-07-08 14:49:59,031 | INFO     | Attack report saved: attack_report_1783518599.json
+2026-07-08 14:50:06,894 | CRITICAL |    Details: {
+  "packet_count": 51
+}
+2026-07-08 14:50:51,890 | CRITICAL |    Details: {
+  "packet_count": 51
+}
+2026-07-08 14:52:04,965 | CRITICAL |    Details: {
+  "packet_count": 51
+}
+2026-07-08 14:53:05,494 | CRITICAL |    Details: {
+  "packet_count": 51
+}
+2026-07-08 14:53:21,375 | CRITICAL |    Details: {
+  "packet_count": 51
+}
+2026-07-08 14:53:55,426 | CRITICAL |    Details: {
+  "syn_count": 101,
+  "target_port": 80
+}
+2026-07-08 14:53:55,427 | INFO     | Applying mitigation for SYN_FLOOD from 10.0.0.6
+2026-07-08 14:53:55,453 | INFO     | Attack report saved: attack_report_1783518835.json
+2026-07-08 14:54:38,559 | CRITICAL |    Details: {
+  "syn_count": 101,
+  "target_port": 80
+}
+2026-07-08 14:54:38,560 | INFO     | Applying mitigation for SYN_FLOOD from 10.0.0.12
+2026-07-08 14:54:38,590 | INFO     | Attack report saved: attack_report_1783518878.json
+2026-07-08 14:54:43,044 | INFO     | Shutting down defense system...
+2026-07-08 14:54:43,069 | INFO     | Final report saved: final_report.json
+2026-07-08 14:54:43,070 | INFO     | System shutdown complete.

@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-07-08T14:47:20.032948",
+  "source_ip": "10.0.0.15",
+  "attack_type": "SYN_FLOOD",
+  "severity": "high",
+  "system_stats": {
+    "uptime_seconds": 1,
+    "total_packets": 751,
+    "total_bytes": 226204,
+    "packets_per_second": 481.6330153355735,
+    "attacks_detected": 4,
+    "packets_dropped": 0,
+    "ips_blocked": 1,
+    "active_flows": 80,
+    "unique_sources": 44,
+    "blacklist_size": 1
+  }
+}
