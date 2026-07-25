@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-07-25T18:46:03.957169",
+  "source_ip": "10.0.0.1",
+  "attack_type": "UDP_FLOOD",
+  "severity": "high",
+  "system_stats": {
+    "uptime_seconds": 4,
+    "total_packets": 6318,
+    "total_bytes": 3768027,
+    "packets_per_second": 1352.9909282929855,
+    "attacks_detected": 27,
+    "packets_dropped": 11320,
+    "ips_blocked": 15,
+    "active_flows": 583,
+    "unique_sources": 66,
+    "blacklist_size": 15
+  }
+}

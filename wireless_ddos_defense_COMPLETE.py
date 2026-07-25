@@ -8,6 +8,7 @@ With Machine Learning Integration (Random Forest, XGBoost, SVM, Isolation Forest
 A Single-File Student Project for Network Security Course
 
 FIXED VERSION - Works on any PC without hardcoded paths
+Includes: CLI args, Dashboard exporter, Auto directory resolution
 ================================================================================
 """
 
@@ -20,10 +21,20 @@ import os
 import random
 import math
 import pickle
+import argparse
 from collections import defaultdict, deque, Counter
 from datetime import datetime
 from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass
+
+# ============================================================
+# BASE DIRECTORY - Force all files to save where the script is
+# ============================================================
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+def resolve_path(filename):
+    """Make any relative path absolute, rooted at the script's folder."""
+    return os.path.join(BASE_DIR, filename)
 
 # ============================================================
 # OPTIONAL IMPORTS - GRACEFUL DEGRADATION
@@ -53,7 +64,84 @@ except ImportError:
     print("WARNING: xgboost not installed. XGBoost model disabled. Run: pip install xgboost")
 
 # ============================================================
-# CONFIGURATION
+# CLI ARGUMENT PARSER
+# ============================================================
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Wireless Network Defense System with ML",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python wireless_ddos_defense_FIXED.py --simulation
+  python wireless_ddos_defense_FIXED.py --interface eth0 --syn-threshold 200
+  python wireless_ddos_defense_FIXED.py --no-ml --log-level DEBUG
+        """
+    )
+
+    parser.add_argument("--simulation", "-s", action="store_true",
+                        help="Force simulation mode (skip raw socket capture)")
+    parser.add_argument("--interface", "-i", default="wlan0",
+                        help="Network interface to monitor (default: wlan0)")
+    parser.add_argument("--syn-threshold", type=int, default=100,
+                        help="SYN flood detection threshold (default: 100)")
+    parser.add_argument("--udp-threshold", type=int, default=500,
+                        help="UDP flood detection threshold (default: 500)")
+    parser.add_argument("--icmp-threshold", type=int, default=50,
+                        help="ICMP flood detection threshold (default: 50)")
+    parser.add_argument("--http-threshold", type=int, default=300,
+                        help="HTTP flood detection threshold (default: 300)")
+    parser.add_argument("--rate-limit", type=int, default=1000,
+                        help="Rate limit in packets per second (default: 1000)")
+    parser.add_argument("--no-ml", action="store_true",
+                        help="Disable machine learning")
+    parser.add_argument("--ml-training", action="store_true", default=True,
+                        help="Enable ML training mode (default: True)")
+    parser.add_argument("--ml-samples", type=int, default=1000,
+                        help="Minimum samples before ML training (default: 1000)")
+    parser.add_argument("--ml-voting", choices=["majority", "unanimous", "weighted"],
+                        default="majority", help="Ensemble voting strategy (default: majority)")
+    parser.add_argument("--blacklist-duration", type=int, default=300,
+                        help="Blacklist duration in seconds (default: 300)")
+    parser.add_argument("--enable-iptables", action="store_true",
+                        help="Enable iptables rules (requires root)")
+    parser.add_argument("--log-file", default="defense_logs.txt",
+                        help="Log file path (default: defense_logs.txt)")
+    parser.add_argument("--log-level", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+                        default="INFO", help="Logging level (default: INFO)")
+    parser.add_argument("--report-file", default="final_report.json",
+                        help="Final report filename (default: final_report.json)")
+    parser.add.argument("--sim-speed", type =float,default=0.05,
+                        help="Simulation speed in seconds per packet (default: 0.05)")
+
+    return parser.parse_args()
+
+
+def build_config_from_args(args):
+    """Convert CLI args into the CONFIG dict format."""
+    return {
+        "network_interface": args.interface,
+        "monitor_mode": False,
+        "syn_flood_threshold": args.syn_threshold,
+        "udp_flood_threshold": args.udp_threshold,
+        "icmp_flood_threshold": args.icmp_threshold,
+        "http_flood_threshold": args.http_threshold,
+        "rate_limit_pps": args.rate_limit,
+        "blacklist_duration": args.blacklist_duration,
+        "whitelist": ["127.0.0.1", "192.168.1.1"],
+        "alert_threshold": "medium",
+        "log_file": resolve_path(args.log_file),
+        "enable_iptables": args.enable_iptables,
+        "ml_enabled": not args.no_ml,
+        "ml_training_mode": args.ml_training,
+        "ml_min_samples": args.ml_samples,
+        "ml_voting": args.ml_voting,
+        "ml_confidence_threshold": 0.7,
+        "ml_contamination": 0.05,
+        "sim_speed": args.sim_speed,
+    }
+
+# ============================================================
+# CONFIGURATION (will be overridden by CLI args in __main__)
 # ============================================================
 CONFIG = {
     "network_interface": "wlan0",
@@ -66,10 +154,8 @@ CONFIG = {
     "blacklist_duration": 300,
     "whitelist": ["127.0.0.1", "192.168.1.1"],
     "alert_threshold": "medium",
-    "log_file": "defense_logs.txt",
+    "log_file": resolve_path("defense_logs.txt"),
     "enable_iptables": False,
-
-    # ML Configuration
     "ml_enabled": True,
     "ml_training_mode": True,
     "ml_min_samples": 1000,
@@ -97,7 +183,7 @@ logger = logging.getLogger('WDDDS')
 # DATA STRUCTURES
 # ============================================================
 class PacketInfo:
-    def __init__(self, timestamp, src_ip, dst_ip, src_port, dst_port, 
+    def __init__(self, timestamp, src_ip, dst_ip, src_port, dst_port,
                  protocol, length, flags="", ttl=64):
         self.timestamp = timestamp
         self.src_ip = src_ip
@@ -146,7 +232,7 @@ class FeatureExtractor:
         packet_rate = total / window_seconds
         byte_rate = sum(p.get('length', 0) for p in traffic_window) / window_seconds
 
-        syn_count = sum(1 for p in traffic_window 
+        syn_count = sum(1 for p in traffic_window
                        if p.get('protocol') == 'TCP' and 'S' in p.get('flags', ''))
         udp_count = sum(1 for p in traffic_window if p.get('protocol') == 'UDP')
         icmp_count = sum(1 for p in traffic_window if p.get('protocol') == 'ICMP')
@@ -185,7 +271,7 @@ class FeatureExtractor:
         bytes_per_flow = sum(f['bytes'] for f in flows.values()) / len(flows) if flows else 0
 
         local_prefixes = ('192.168.', '10.', '172.16.')
-        incoming = sum(1 for p in traffic_window 
+        incoming = sum(1 for p in traffic_window
                       if not p.get('src_ip', '').startswith(local_prefixes))
         incoming_ratio = incoming / total if total > 0 else 0
 
@@ -258,8 +344,16 @@ class BaseMLModel:
                 logger.error(f"Failed to load {self.name}: {e}")
         return False
 
+    def _attack_probability(self, proba):
+        classes = list(self.model.classes_)
+        if 1 not in classes:
+            return 0.0
+        return float(proba[classes.index(1)])
+
 class RandomForestModel(BaseMLModel):
-    def __init__(self, model_path="models/rf_model.pkl"):
+    def __init__(self, model_path=None):
+        if model_path is None:
+            model_path = resolve_path("models/rf_model.pkl")
         super().__init__("RandomForest", model_path)
 
     def train(self, X, y):
@@ -284,8 +378,8 @@ class RandomForestModel(BaseMLModel):
         if not self.is_trained:
             return False, 0.0
         proba = self.model.predict_proba(X)[0]
-        attack_prob = proba[1] if len(proba) > 1 else proba[0]
-        return attack_prob > 0.5, float(attack_prob)
+        attack_prob = self._attack_probability(proba)
+        return attack_prob > 0.5, attack_prob
 
     def get_feature_importance(self):
         if not self.is_trained:
@@ -294,7 +388,9 @@ class RandomForestModel(BaseMLModel):
         return {name: round(float(imp), 4) for name, imp in zip(FeatureExtractor.FEATURE_NAMES, importance)}
 
 class XGBoostModel(BaseMLModel):
-    def __init__(self, model_path="models/xgb_model.pkl"):
+    def __init__(self, model_path=None):
+        if model_path is None:
+            model_path = resolve_path("models/xgb_model.pkl")
         super().__init__("XGBoost", model_path)
 
     def train(self, X, y):
@@ -320,8 +416,9 @@ class XGBoostModel(BaseMLModel):
     def predict(self, X):
         if not self.is_trained:
             return False, 0.0
-        attack_prob = self.model.predict_proba(X)[0][1]
-        return attack_prob > 0.5, float(attack_prob)
+        proba = self.model.predict_proba(X)[0]
+        attack_prob = self._attack_probability(proba)
+        return attack_prob > 0.5, attack_prob
 
     def get_feature_importance(self):
         if not self.is_trained:
@@ -330,7 +427,9 @@ class XGBoostModel(BaseMLModel):
         return {name: round(float(imp), 4) for name, imp in zip(FeatureExtractor.FEATURE_NAMES, importance)}
 
 class SVMModel(BaseMLModel):
-    def __init__(self, model_path="models/svm_model.pkl"):
+    def __init__(self, model_path=None):
+        if model_path is None:
+            model_path = resolve_path("models/svm_model.pkl")
         super().__init__("SVM", model_path)
 
     def train(self, X, y):
@@ -354,13 +453,16 @@ class SVMModel(BaseMLModel):
         if not self.is_trained or self.scaler is None:
             return False, 0.0
         X_scaled = self.scaler.transform(X)
-        attack_prob = self.model.predict_proba(X_scaled)[0][1]
-        return attack_prob > 0.5, float(attack_prob)
+        proba = self.model.predict_proba(X_scaled)[0]
+        attack_prob = self._attack_probability(proba)
+        return attack_prob > 0.5, attack_prob
 
 class IsolationForestModel(BaseMLModel):
-    def __init__(self, model_path="models/if_model.pkl"):
+    def __init__(self, model_path=None, contamination=0.05):
+        if model_path is None:
+            model_path = resolve_path("models/if_model.pkl")
         super().__init__("IsolationForest", model_path)
-        self.contamination = 0.1
+        self.contamination = contamination
 
     def train(self, X, y=None):
         if not SKLEARN_AVAILABLE:
@@ -391,24 +493,29 @@ class IsolationForestModel(BaseMLModel):
 # ENSEMBLE DETECTOR
 # ============================================================
 class EnsembleDetector:
-    def __init__(self, models_dir="models"):
+    def __init__(self, config, models_dir=None):
+        if models_dir is None:
+            models_dir = resolve_path("models")
         self.models_dir = models_dir
+        self.config = config
         os.makedirs(models_dir, exist_ok=True)
 
         self.feature_extractor = FeatureExtractor()
         self.models = {}
 
         if SKLEARN_AVAILABLE:
-            self.models['random_forest'] = RandomForestModel(f"{models_dir}/rf_model.pkl")
-            self.models['svm'] = SVMModel(f"{models_dir}/svm_model.pkl")
-            self.models['isolation_forest'] = IsolationForestModel(f"{models_dir}/if_model.pkl")
+            self.models['random_forest'] = RandomForestModel()
+            self.models['svm'] = SVMModel()
+            self.models['isolation_forest'] = IsolationForestModel(
+                contamination=config.get("ml_contamination", 0.05)
+            )
 
         if XGBOOST_AVAILABLE:
-            self.models['xgboost'] = XGBoostModel(f"{models_dir}/xgb_model.pkl")
+            self.models['xgboost'] = XGBoostModel()
 
         self.training_buffer_X = []
         self.training_buffer_y = []
-        self.min_training_samples = CONFIG.get("ml_min_samples", 1000)
+        self.min_training_samples = config.get("ml_min_samples", 1000)
 
         for name, model in self.models.items():
             model.load()
@@ -522,7 +629,6 @@ class WirelessDDoSDefenseSystem:
         self.lock = threading.Lock()
         self.start_time = time.time()
 
-        # ML Integration
         self.ml_enabled = config.get("ml_enabled", True) and (SKLEARN_AVAILABLE or XGBOOST_AVAILABLE)
         self.ml_detector = None
         self.ml_traffic_buffer = deque(maxlen=1000)
@@ -544,7 +650,7 @@ class WirelessDDoSDefenseSystem:
 
     def setup_ml_ensemble(self):
         try:
-            self.ml_detector = EnsembleDetector(models_dir="models")
+            self.ml_detector = EnsembleDetector(self.config)
             status = self.ml_detector.get_model_status()
             logger.info(f"ML Models status: {status}")
 
@@ -583,13 +689,25 @@ class WirelessDDoSDefenseSystem:
             self.simulate_traffic()
 
     def parse_ethernet_frame(self, data):
-        eth_header = data[:14]
-        eth_type = struct.unpack('!H', eth_header[12:14])[0]
+        if len(data) < 14:
+            return None
+
+        offset = 14
+        eth_type = struct.unpack('!H', data[12:14])[0]
+
+        if eth_type == 0x8100:
+            if len(data) < 18:
+                return None
+            eth_type = struct.unpack('!H', data[16:18])[0]
+            offset = 18
 
         if eth_type != 0x0800:
             return None
 
-        ip_header = data[14:34]
+        if len(data) < offset + 20:
+            return None
+
+        ip_header = data[offset:offset + 20]
         iph = struct.unpack('!BBHHHBBH4s4s', ip_header)
 
         version_ihl = iph[0]
@@ -606,9 +724,11 @@ class WirelessDDoSDefenseSystem:
         flags = ""
         proto_name = "OTHER"
 
+        transport_offset = offset + iph_length
+
         if protocol == 6:
             proto_name = "TCP"
-            tcp_header = data[14 + iph_length:14 + iph_length + 20]
+            tcp_header = data[transport_offset:transport_offset + 20]
             if len(tcp_header) >= 20:
                 tcph = struct.unpack('!HHLLBBHHH', tcp_header)
                 src_port = tcph[0]
@@ -616,7 +736,7 @@ class WirelessDDoSDefenseSystem:
                 flags = self.parse_tcp_flags(tcph[5])
         elif protocol == 17:
             proto_name = "UDP"
-            udp_header = data[14 + iph_length:14 + iph_length + 8]
+            udp_header = data[transport_offset:transport_offset + 8]
             if len(udp_header) >= 8:
                 udph = struct.unpack('!HHHH', udp_header)
                 src_port = udph[0]
@@ -647,13 +767,22 @@ class WirelessDDoSDefenseSystem:
         protocols = ["TCP", "UDP", "ICMP"]
 
         while self.is_running:
-            is_attack = random.random() < 0.1
+            is_attack = random.random() < 0.03
 
             if is_attack:
                 attacker = random.choice(attack_ips)
                 attack_type = random.choice(["syn", "udp", "icmp", "http"])
 
-                for _ in range(random.randint(20, 100)):
+                if attack_type == "syn":
+                    attack_volume = random.randint(120, 250)
+                elif attack_type == "udp":
+                    attack_volume = random.randint(550, 1000)
+                elif attack_type == "icmp":
+                    attack_volume = random.randint(60, 150)
+                else:
+                    attack_volume = random.randint(320, 600)
+
+                for _ in range(attack_volume):
                     if attack_type == "syn":
                         pkt = PacketInfo(time.time(), attacker, "192.168.1.1",
                                        random.randint(1024, 65535), 80, "TCP",
@@ -670,18 +799,26 @@ class WirelessDDoSDefenseSystem:
                         pkt = PacketInfo(time.time(), attacker, "192.168.1.1",
                                        random.randint(1024, 65535), 80, "TCP",
                                        random.randint(200, 800), "PA")
-                    self.process_packet(pkt)
+                    self.process_packet(pkt, ground_truth=True)
+
+                for _ in range(5):
+                    bg_pkt = PacketInfo(
+                        time.time(), random.choice(normal_ips), random.choice(normal_ips),
+                        random.randint(1024, 65535), random.choice([80, 443, 53, 22]),
+                        random.choice(protocols), random.randint(64, 1500)
+                    )
+                    self.process_packet(bg_pkt, ground_truth=False)
             else:
                 pkt = PacketInfo(
                     time.time(), random.choice(normal_ips), random.choice(normal_ips),
                     random.randint(1024, 65535), random.choice([80, 443, 53, 22]),
                     random.choice(protocols), random.randint(64, 1500)
                 )
-                self.process_packet(pkt)
+                self.process_packet(pkt, ground_truth=False)
 
-            time.sleep(0.01)
+            time.sleep(self.config.get("sim_speed", 0.05))
 
-    def process_packet(self, packet):
+    def process_packet(self, packet, ground_truth=None):
         src_ip = packet.src_ip
 
         if src_ip in self.whitelist:
@@ -712,7 +849,6 @@ class WirelessDDoSDefenseSystem:
         self.track_flow(packet)
         self.detect_port_scan(packet)
 
-        # ML Processing
         if self.ml_enabled and self.ml_detector:
             self.ml_traffic_buffer.append({
                 'timestamp': packet.timestamp,
@@ -722,7 +858,8 @@ class WirelessDDoSDefenseSystem:
                 'dst_port': packet.dst_port,
                 'protocol': packet.protocol,
                 'length': packet.length,
-                'flags': packet.flags
+                'flags': packet.flags,
+                'true_label': ground_truth
             })
 
             if len(self.ml_traffic_buffer) >= 100:
@@ -830,16 +967,17 @@ class WirelessDDoSDefenseSystem:
                 return False
 
     def is_blacklisted(self, ip):
-        if ip in self.blacklist:
-            entry = self.blacklist[ip]
-            if time.time() > entry.expiry:
-                del self.blacklist[ip]
-                logger.info(f"Blacklist entry expired for {ip}")
-                return False
-            entry.hit_count += 1
-            entry.last_seen = time.time()
-            return True
-        return False
+        with self.lock:
+            if ip in self.blacklist:
+                entry = self.blacklist[ip]
+                if time.time() > entry.expiry:
+                    del self.blacklist[ip]
+                    logger.info(f"Blacklist entry expired for {ip}")
+                    return False
+                entry.hit_count += 1
+                entry.last_seen = time.time()
+                return True
+            return False
 
     def add_to_blacklist(self, ip, reason, severity="high", duration=None):
         if ip in self.whitelist:
@@ -858,7 +996,7 @@ class WirelessDDoSDefenseSystem:
                 self.blacklist[ip] = BlacklistEntry(ip, reason, severity, time.time() + duration)
                 self.ips_blocked += 1
 
-        logger.warning(f"🚫 IP {ip} BLACKLISTED | Reason: {reason} | Duration: {duration}s")
+        logger.warning(f" IP {ip} BLACKLISTED | Reason: {reason} | Duration: {duration}s")
 
         defense_action = {
             "timestamp": datetime.now().isoformat(),
@@ -906,8 +1044,18 @@ class WirelessDDoSDefenseSystem:
     def report_attack(self, attack_type, source_ip, details, severity):
         self.attacks_detected += 1
 
-        logger.critical(f"🚨 ATTACK DETECTED: {attack_type} from {source_ip} [{severity}]")
+        if "ML" in attack_type:
+            detector = " MACHINE LEARNING"
+        else:
+            detector = " THRESHOLD-BASED"
+
+        logger.critical("=" * 60)
+        logger.critical(f" ATTACK DETECTED by {detector}")
+        logger.critical(f"   Type: {attack_type}")
+        logger.critical(f"   Source: {source_ip}")
+        logger.critical(f"   Severity: {severity}")
         logger.critical(f"   Details: {json.dumps(details, indent=2)}")
+        logger.critical("=" * 60)
 
         detection = {
             "timestamp": datetime.now().isoformat(),
@@ -960,7 +1108,7 @@ class WirelessDDoSDefenseSystem:
             "system_stats": self.get_statistics()
         }
 
-        filename = f"attack_report_{int(time.time())}.json"
+        filename = resolve_path(f"attack_report_{int(time.time())}.json")
         try:
             with open(filename, "w") as f:
                 json.dump(report, f, indent=2)
@@ -968,51 +1116,121 @@ class WirelessDDoSDefenseSystem:
         except Exception as e:
             logger.error(f"Failed to save report: {e}")
 
+    def _compute_window_label(self, window):
+        if not window:
+            return False
+
+        labeled = [p for p in window if p.get('true_label') is not None]
+        if labeled:
+            attack_votes = sum(1 for p in labeled if p['true_label'])
+            return (attack_votes / len(labeled)) > 0.3
+
+        total = len(window)
+        window_seconds = max(window[-1]['timestamp'] - window[0]['timestamp'], 0.1)
+
+        syn_count = sum(
+            1 for p in window
+            if p.get('protocol') == 'TCP' and 'S' in p.get('flags', '') and 'A' not in p.get('flags', '')
+        )
+        udp_count = sum(1 for p in window if p.get('protocol') == 'UDP')
+        icmp_count = sum(1 for p in window if p.get('protocol') == 'ICMP')
+        http_count = sum(1 for p in window if p.get('dst_port') in (80, 443, 8080))
+
+        if syn_count > self.config["syn_flood_threshold"]:
+            return True
+        if udp_count > self.config["udp_flood_threshold"]:
+            return True
+        if icmp_count > self.config["icmp_flood_threshold"]:
+            return True
+        if http_count > self.config["http_flood_threshold"]:
+            return True
+
+        src_counts = Counter(p.get('src_ip') for p in window)
+        dominant_ip, dominant_count = src_counts.most_common(1)[0]
+        if dominant_count / total > 0.8 and total / window_seconds > self.config["rate_limit_pps"] * 0.3:
+            return True
+
+        return False
+
     def run_ml_detection(self):
         if not self.ml_detector:
             return
 
         try:
-            window = list(self.ml_traffic_buffer)
+            window = list(self.ml_traffic_buffer)[-100:]
 
             if self.ml_training_mode:
-                is_attack = (self.attacks_detected > self.ml_attack_count)
+                is_attack = self._compute_window_label(window)
+
+                max_class_ratio = 3.0
+                if is_attack and self.ml_attack_count >= max_class_ratio * (self.ml_normal_count + 1):
+                    return
+                if not is_attack and self.ml_normal_count >= max_class_ratio * (self.ml_attack_count + 1):
+                    return
 
                 features = self.ml_detector.extract_features(window)
                 if features is not None:
                     self.ml_detector.add_training_sample(features, is_attack)
 
                     if is_attack:
-                        self.ml_attack_count = self.attacks_detected
+                        self.ml_attack_count += 1
                     else:
                         self.ml_normal_count += 1
 
                     total_samples = len(self.ml_detector.training_buffer_X)
                     if total_samples >= self.ml_detector.min_training_samples:
-                        logger.info(f"Training ML models with {total_samples} samples...")
-                        results = self.ml_detector.train_all_models()
-                        if any(results.values()):
-                            self.ml_training_mode = False
-                            logger.info("ML models trained! Detection mode active.")
+                        min_class_samples = 20
+                        if self.ml_attack_count < min_class_samples or self.ml_normal_count < min_class_samples:
+                            if total_samples % 500 == 0:
+                                logger.info(
+                                    f" Collecting more samples for balanced training "
+                                    f"(attack={self.ml_attack_count}, normal={self.ml_normal_count})..."
+                                )
+                        else:
+                            logger.info("=" * 60)
+                            logger.info(" TRAINING ML MODELS...")
+                            logger.info(
+                                f" Training set: {total_samples} samples "
+                                f"({self.ml_attack_count} attack / {self.ml_normal_count} normal)"
+                            )
+                            logger.info("=" * 60)
+                            results = self.ml_detector.train_all_models()
+                            if any(results.values()):
+                                self.ml_training_mode = False
+                                logger.info("=" * 60)
+                                logger.info(" ML MODELS TRAINED AND ACTIVE!")
+                                logger.info("=" * 60)
+                                logger.info("ML will now detect attacks independently.")
 
             else:
                 result = self.ml_detector.detect(window, voting=self.config.get("ml_voting", "majority"))
 
-                if result and result.is_attack and result.confidence > self.config.get("ml_confidence_threshold", 0.7):
-                    ip_counts = Counter(p.get('src_ip') for p in window)
-                    attacker = ip_counts.most_common(1)[0][0]
+                if result:
+                    if result.is_attack and result.confidence > self.config.get("ml_confidence_threshold", 0.7):
+                        ip_counts = Counter(p.get('src_ip') for p in window)
+                        attacker = ip_counts.most_common(1)[0][0]
 
-                    self.report_attack("ML_ENSEMBLE_DETECTED", attacker, {
-                        "confidence": result.confidence,
-                        "algorithm": result.algorithm,
-                        "top_features": dict(sorted(
-                            result.feature_importance.items(),
-                            key=lambda x: x[1],
-                            reverse=True
-                        )[:5])
-                    }, "high")
+                        logger.critical("=" * 60)
+                        logger.critical(" ML ENSEMBLE DETECTED ATTACK!")
+                        logger.critical(f"   Attacker: {attacker}")
+                        logger.critical(f"   Confidence: {result.confidence:.2%}")
+                        logger.critical(f"   Algorithm: {result.algorithm}")
+                        logger.critical(f"   Top Features: {dict(sorted(result.feature_importance.items(), key=lambda x: x[1], reverse=True)[:3])}")
+                        logger.critical("=" * 60)
 
-                    self.ml_traffic_buffer.clear()
+                        self.report_attack("ML_ENSEMBLE_DETECTED", attacker, {
+                            "confidence": result.confidence,
+                            "algorithm": result.algorithm,
+                            "top_features": dict(sorted(
+                                result.feature_importance.items(),
+                                key=lambda x: x[1],
+                                reverse=True
+                            )[:5])
+                        }, "high")
+
+                        self.ml_traffic_buffer.clear()
+                    else:
+                        logger.info(f" ML Check: Normal traffic (confidence: {result.confidence:.2%})")
 
         except Exception as e:
             logger.error(f"ML detection error: {e}")
@@ -1109,6 +1327,62 @@ class WirelessDDoSDefenseSystem:
         print(separator)
         print()
 
+    # ============================================================
+    # DASHBOARD EXPORTER
+    # ============================================================
+    def export_status_for_dashboard(self):
+        """Write current system state to a JSON file for the web dashboard."""
+        try:
+            stats = self.get_statistics()
+            ml_status = self.get_ml_status()
+
+            top_attackers = []
+            with self.lock:
+                sorted_ips = sorted(
+                    self.ip_packet_counts.items(),
+                    key=lambda x: x[1],
+                    reverse=True
+                )[:10]
+                for ip, count in sorted_ips:
+                    top_attackers.append({
+                        "ip": ip,
+                        "packets": count,
+                        "bytes": self.ip_byte_counts.get(ip, 0),
+                        "blacklisted": ip in self.blacklist
+                    })
+
+            recent_detections = list(self.detection_log)[-10:]
+
+            status = {
+                "timestamp": datetime.now().isoformat(),
+                "running": self.is_running,
+                "statistics": stats,
+                "ml_status": ml_status,
+                "top_attackers": top_attackers,
+                "recent_detections": recent_detections,
+                "blacklist_size": len(self.blacklist),
+                "config": {
+                    "interface": self.config.get("network_interface"),
+                    "ml_enabled": self.ml_enabled,
+                    "syn_threshold": self.config.get("syn_flood_threshold"),
+                    "udp_threshold": self.config.get("udp_flood_threshold"),
+                }
+            }
+
+            with open(resolve_path("dashboard_status.json"), "w") as f:
+                json.dump(status, f, indent=2)
+        except Exception as e:
+            logger.debug(f"Dashboard export failed: {e}")
+
+    def dashboard_exporter(self):
+        """Background thread that exports status every second for the dashboard."""
+        while self.is_running:
+            self.export_status_for_dashboard()
+            time.sleep(1)
+
+    # ============================================================
+    # START / STOP
+    # ============================================================
     def start(self):
         self.is_running = True
         self.start_time = time.time()
@@ -1126,9 +1400,11 @@ class WirelessDDoSDefenseSystem:
         status_thread = threading.Thread(target=self.status_reporter, daemon=True)
         status_thread.start()
 
+        dashboard_thread = threading.Thread(target=self.dashboard_exporter, daemon=True)
+        dashboard_thread.start()
+
         logger.info("All threads started. System is ACTIVE.")
         logger.info("Press Ctrl+C to stop.")
-
 
         try:
             while self.is_running:
@@ -1171,10 +1447,11 @@ class WirelessDDoSDefenseSystem:
             ]
         }
 
+        filename = resolve_path(self.config.get("report_file", "final_report.json"))
         try:
-            with open("final_report.json", "w") as f:
+            with open(filename, "w") as f:
                 json.dump(report, f, indent=2)
-            logger.info("Final report saved: final_report.json")
+            logger.info(f"Final report saved: {filename}")
         except Exception as e:
             logger.error(f"Failed to save final report: {e}")
 
@@ -1183,12 +1460,46 @@ class WirelessDDoSDefenseSystem:
 # MAIN ENTRY POINT
 # ============================================================
 if __name__ == "__main__":
+    args = parse_args()
+
+    # Set logging level from CLI
+    logging.getLogger().setLevel(getattr(logging, args.log_level))
+    # Re-configure file handler with CLI log file path
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
+    logging.basicConfig(
+        level=getattr(logging, args.log_level),
+        format='%(asctime)s | %(levelname)-8s | %(message)s',
+        handlers=[
+            logging.FileHandler(resolve_path(args.log_file)),
+            logging.StreamHandler()
+        ]
+    )
+    logger = logging.getLogger('WDDDS')
+
+    CONFIG = build_config_from_args(args)
+
     print("""
-    ╔═══════════════════════════════════════════════════════════════╗
-    ║     WIRELESS NETWORK DEFENSE SYSTEM                         ║
-    ║     With ML: Random Forest, XGBoost, SVM, Isolation Forest  ║
-    ╚═══════════════════════════════════════════════════════════════╝
+
+         WIRELESS NETWORK DEFENSE SYSTEM                         
+         With ML: Random Forest, XGBoost, SVM, Isolation Forest  
+
     """)
+
+    print(f"[CONFIG] Interface: {CONFIG['network_interface']}")
+    print(f"[CONFIG] ML Enabled: {CONFIG['ml_enabled']}")
+    print(f"[CONFIG] SYN Threshold: {CONFIG['syn_flood_threshold']}")
+    print(f"[CONFIG] UDP Threshold: {CONFIG['udp_flood_threshold']}")
+    print(f"[CONFIG] Log Level: {args.log_level}")
+    print(f"[CONFIG] Log File: {CONFIG['log_file']}")
+    print(f"[INFO] All output files will be saved to: {BASE_DIR}")
+    print(f"[INFO] Files created:")
+    print(f"       - {args.log_file}      (live logs)")
+    print(f"       - {args.report_file}     (summary after stopping)")
+    print(f"       - attack_report_*.json  (individual attacks)")
+    print(f"       - models/               (trained ML models)")
+    print(f"       - dashboard_status.json (live dashboard data)")
+    print()
 
     defense_system = WirelessDDoSDefenseSystem(CONFIG)
     defense_system.start()

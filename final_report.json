@@ -1,17 +1,17 @@
 {
   "system_name": "Wireless Network Defense System with ML",
-  "timestamp": "2026-07-08T14:54:43.063454",
+  "timestamp": "2026-07-25T18:50:43.923021",
   "statistics": {
-    "uptime_seconds": 444,
-    "total_packets": 5969,
-    "total_bytes": 2769518,
-    "packets_per_second": 13.425859637971739,
-    "attacks_detected": 23,
-    "packets_dropped": 2490,
-    "ips_blocked": 7,
-    "active_flows": 774,
+    "uptime_seconds": 284,
+    "total_packets": 10855,
+    "total_bytes": 7095610,
+    "packets_per_second": 38.13648978399547,
+    "attacks_detected": 31,
+    "packets_dropped": 104411,
+    "ips_blocked": 19,
+    "active_flows": 3680,
     "unique_sources": 67,
-    "blacklist_size": 7
+    "blacklist_size": 19
   },
   "configuration": {
     "network_interface": "wlan0",
@@ -27,7 +27,7 @@
       "192.168.1.1"
     ],
     "alert_threshold": "medium",
-    "log_file": "defense_logs.txt",
+    "log_file": "C:\\DDOS DEFENSE SYSTEM\\defense_logs.txt",
     "enable_iptables": false,
     "ml_enabled": true,
     "ml_training_mode": true,
@@ -38,29 +38,31 @@
   },
   "detection_history": [
     {
-      "timestamp": "2026-07-08T14:47:19.104370",
-      "attack_type": "ICMP_FLOOD",
-      "source_ip": "10.0.0.5",
-      "severity": "medium",
-      "details": {
-        "packet_count": 51
-      },
-      "mitigated": false
-    },
-    {
-      "timestamp": "2026-07-08T14:47:19.204079",
-      "attack_type": "ICMP_FLOOD",
+      "timestamp": "2026-07-25T18:45:59.343045",
+      "attack_type": "SYN_FLOOD",
       "source_ip": "10.0.0.9",
-      "severity": "medium",
+      "severity": "high",
       "details": {
-        "packet_count": 51
+        "syn_count": 101,
+        "target_port": 80
       },
-      "mitigated": false
+      "mitigated": true
     },
     {
-      "timestamp": "2026-07-08T14:47:19.851388",
+      "timestamp": "2026-07-25T18:45:59.499792",
+      "attack_type": "HTTP_FLOOD",
+      "source_ip": "10.0.0.4",
+      "severity": "high",
+      "details": {
+        "request_count": 301,
+        "target_port": 80
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:45:59.650535",
       "attack_type": "ICMP_FLOOD",
-      "source_ip": "10.0.0.1",
+      "source_ip": "10.0.0.16",
       "severity": "medium",
       "details": {
         "packet_count": 51
@@ -68,7 +70,278 @@
       "mitigated": false
     },
     {
-      "timestamp": "2026-07-08T14:47:19.993137",
+      "timestamp": "2026-07-25T18:45:59.657616",
+      "attack_type": "ICMP_FLOOD",
+      "source_ip": "10.0.0.16",
+      "severity": "medium",
+      "details": {
+        "packet_count": 51
+      },
+      "mitigated": false
+    },
+    {
+      "timestamp": "2026-07-25T18:45:59.878952",
+      "attack_type": "UDP_FLOOD",
+      "source_ip": "10.0.0.16",
+      "severity": "high",
+      "details": {
+        "packet_count": 501,
+        "target_port": 443,
+        "packet_size": 1152
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:00.092897",
+      "attack_type": "SYN_FLOOD",
+      "source_ip": "10.0.0.13",
+      "severity": "high",
+      "details": {
+        "syn_count": 101,
+        "target_port": 80
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:00.169480",
+      "attack_type": "ICMP_FLOOD",
+      "source_ip": "10.0.0.10",
+      "severity": "medium",
+      "details": {
+        "packet_count": 51
+      },
+      "mitigated": false
+    },
+    {
+      "timestamp": "2026-07-25T18:46:00.175919",
+      "attack_type": "ICMP_FLOOD",
+      "source_ip": "10.0.0.10",
+      "severity": "medium",
+      "details": {
+        "packet_count": 51
+      },
+      "mitigated": false
+    },
+    {
+      "timestamp": "2026-07-25T18:46:00.234519",
+      "attack_type": "ICMP_FLOOD",
+      "source_ip": "10.0.0.12",
+      "severity": "medium",
+      "details": {
+        "packet_count": 51
+      },
+      "mitigated": false
+    },
+    {
+      "timestamp": "2026-07-25T18:46:00.552665",
+      "attack_type": "UDP_FLOOD",
+      "source_ip": "10.0.0.3",
+      "severity": "high",
+      "details": {
+        "packet_count": 501,
+        "target_port": 80,
+        "packet_size": 322
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:00.853919",
+      "attack_type": "UDP_FLOOD",
+      "source_ip": "10.0.0.18",
+      "severity": "high",
+      "details": {
+        "packet_count": 501,
+        "target_port": 53,
+        "packet_size": 1477
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:00.899237",
+      "attack_type": "ICMP_FLOOD",
+      "source_ip": "10.0.0.14",
+      "severity": "medium",
+      "details": {
+        "packet_count": 51
+      },
+      "mitigated": false
+    },
+    {
+      "timestamp": "2026-07-25T18:46:01.162037",
+      "attack_type": "UDP_FLOOD",
+      "source_ip": "10.0.0.14",
+      "severity": "high",
+      "details": {
+        "packet_count": 501,
+        "target_port": 443,
+        "packet_size": 1229
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:01.404673",
+      "attack_type": "HTTP_FLOOD",
+      "source_ip": "10.0.0.12",
+      "severity": "high",
+      "details": {
+        "request_count": 301,
+        "target_port": 80
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:01.501034",
+      "attack_type": "ICMP_FLOOD",
+      "source_ip": "10.0.0.6",
+      "severity": "medium",
+      "details": {
+        "packet_count": 51
+      },
+      "mitigated": false
+    },
+    {
+      "timestamp": "2026-07-25T18:46:01.506618",
+      "attack_type": "ICMP_FLOOD",
+      "source_ip": "10.0.0.6",
+      "severity": "medium",
+      "details": {
+        "packet_count": 51
+      },
+      "mitigated": false
+    },
+    {
+      "timestamp": "2026-07-25T18:46:01.734223",
+      "attack_type": "UDP_FLOOD",
+      "source_ip": "10.0.0.5",
+      "severity": "high",
+      "details": {
+        "packet_count": 501,
+        "target_port": 443,
+        "packet_size": 1442
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:01.979329",
+      "attack_type": "ICMP_FLOOD",
+      "source_ip": "10.0.0.2",
+      "severity": "medium",
+      "details": {
+        "packet_count": 51
+      },
+      "mitigated": false
+    },
+    {
+      "timestamp": "2026-07-25T18:46:02.135301",
+      "attack_type": "SYN_FLOOD",
+      "source_ip": "10.0.0.7",
+      "severity": "high",
+      "details": {
+        "syn_count": 101,
+        "target_port": 80
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:02.313266",
+      "attack_type": "UDP_FLOOD",
+      "source_ip": "10.0.0.10",
+      "severity": "high",
+      "details": {
+        "packet_count": 501,
+        "target_port": 53,
+        "packet_size": 365
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:02.420885",
+      "attack_type": "SYN_FLOOD",
+      "source_ip": "10.0.0.17",
+      "severity": "high",
+      "details": {
+        "syn_count": 101,
+        "target_port": 80
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:02.519539",
+      "attack_type": "HTTP_FLOOD",
+      "source_ip": "10.0.0.11",
+      "severity": "high",
+      "details": {
+        "request_count": 301,
+        "target_port": 80
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:02.933888",
+      "attack_type": "ICMP_FLOOD",
+      "source_ip": "10.0.0.19",
+      "severity": "medium",
+      "details": {
+        "packet_count": 51
+      },
+      "mitigated": false
+    },
+    {
+      "timestamp": "2026-07-25T18:46:02.937090",
+      "attack_type": "ICMP_FLOOD",
+      "source_ip": "10.0.0.19",
+      "severity": "medium",
+      "details": {
+        "packet_count": 51
+      },
+      "mitigated": false
+    },
+    {
+      "timestamp": "2026-07-25T18:46:02.951182",
+      "attack_type": "ICMP_FLOOD",
+      "source_ip": "10.0.0.19",
+      "severity": "medium",
+      "details": {
+        "packet_count": 51
+      },
+      "mitigated": false
+    },
+    {
+      "timestamp": "2026-07-25T18:46:03.013084",
+      "attack_type": "SYN_FLOOD",
+      "source_ip": "10.0.0.8",
+      "severity": "high",
+      "details": {
+        "syn_count": 101,
+        "target_port": 80
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:03.956786",
+      "attack_type": "UDP_FLOOD",
+      "source_ip": "10.0.0.1",
+      "severity": "high",
+      "details": {
+        "packet_count": 501,
+        "target_port": 443,
+        "packet_size": 345
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:04.059211",
+      "attack_type": "HTTP_FLOOD",
+      "source_ip": "10.0.0.2",
+      "severity": "high",
+      "details": {
+        "request_count": 301,
+        "target_port": 80
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:05.044101",
       "attack_type": "SYN_FLOOD",
       "source_ip": "10.0.0.15",
       "severity": "high",
@@ -79,205 +352,160 @@
       "mitigated": true
     },
     {
-      "timestamp": "2026-07-08T14:47:20.867643",
-      "attack_type": "ICMP_FLOOD",
-      "source_ip": "10.0.0.8",
-      "severity": "medium",
-      "details": {
-        "packet_count": 51
-      },
-      "mitigated": false
-    },
-    {
-      "timestamp": "2026-07-08T14:47:36.538694",
-      "attack_type": "SYN_FLOOD",
-      "source_ip": "10.0.0.11",
-      "severity": "high",
-      "details": {
-        "syn_count": 101,
-        "target_port": 80
-      },
-      "mitigated": true
-    },
-    {
-      "timestamp": "2026-07-08T14:47:40.127017",
-      "attack_type": "ICMP_FLOOD",
-      "source_ip": "10.0.0.8",
-      "severity": "medium",
-      "details": {
-        "packet_count": 51
-      },
-      "mitigated": false
-    },
-    {
-      "timestamp": "2026-07-08T14:47:44.610603",
-      "attack_type": "ICMP_FLOOD",
-      "source_ip": "10.0.0.8",
-      "severity": "medium",
-      "details": {
-        "packet_count": 51
-      },
-      "mitigated": false
-    },
-    {
-      "timestamp": "2026-07-08T14:47:46.811695",
-      "attack_type": "ICMP_FLOOD",
-      "source_ip": "10.0.0.1",
-      "severity": "medium",
-      "details": {
-        "packet_count": 51
-      },
-      "mitigated": false
-    },
-    {
-      "timestamp": "2026-07-08T14:48:16.824566",
-      "attack_type": "SYN_FLOOD",
-      "source_ip": "10.0.0.1",
-      "severity": "high",
-      "details": {
-        "syn_count": 101,
-        "target_port": 80
-      },
-      "mitigated": true
-    },
-    {
-      "timestamp": "2026-07-08T14:49:26.063131",
-      "attack_type": "ICMP_FLOOD",
-      "source_ip": "10.0.0.19",
-      "severity": "medium",
-      "details": {
-        "packet_count": 51
-      },
-      "mitigated": false
-    },
-    {
-      "timestamp": "2026-07-08T14:49:30.507230",
-      "attack_type": "ICMP_FLOOD",
-      "source_ip": "10.0.0.19",
-      "severity": "medium",
-      "details": {
-        "packet_count": 51
-      },
-      "mitigated": false
-    },
-    {
-      "timestamp": "2026-07-08T14:49:33.690246",
-      "attack_type": "ICMP_FLOOD",
-      "source_ip": "10.0.0.3",
-      "severity": "medium",
-      "details": {
-        "packet_count": 51
-      },
-      "mitigated": false
-    },
-    {
-      "timestamp": "2026-07-08T14:49:46.686147",
-      "attack_type": "ICMP_FLOOD",
-      "source_ip": "10.0.0.14",
-      "severity": "medium",
-      "details": {
-        "packet_count": 51
-      },
-      "mitigated": false
-    },
-    {
-      "timestamp": "2026-07-08T14:49:52.321154",
-      "attack_type": "SYN_FLOOD",
-      "source_ip": "10.0.0.18",
-      "severity": "high",
-      "details": {
-        "syn_count": 101,
-        "target_port": 80
-      },
-      "mitigated": true
-    },
-    {
-      "timestamp": "2026-07-08T14:49:58.993140",
-      "attack_type": "SYN_FLOOD",
-      "source_ip": "10.0.0.3",
-      "severity": "high",
-      "details": {
-        "syn_count": 101,
-        "target_port": 80
-      },
-      "mitigated": true
-    },
-    {
-      "timestamp": "2026-07-08T14:50:06.894693",
-      "attack_type": "ICMP_FLOOD",
-      "source_ip": "10.0.0.14",
-      "severity": "medium",
-      "details": {
-        "packet_count": 51
-      },
-      "mitigated": false
-    },
-    {
-      "timestamp": "2026-07-08T14:50:51.891250",
-      "attack_type": "ICMP_FLOOD",
-      "source_ip": "10.0.0.9",
-      "severity": "medium",
-      "details": {
-        "packet_count": 51
-      },
-      "mitigated": false
-    },
-    {
-      "timestamp": "2026-07-08T14:52:04.965636",
-      "attack_type": "ICMP_FLOOD",
-      "source_ip": "10.0.0.17",
-      "severity": "medium",
-      "details": {
-        "packet_count": 51
-      },
-      "mitigated": false
-    },
-    {
-      "timestamp": "2026-07-08T14:53:05.495035",
-      "attack_type": "ICMP_FLOOD",
-      "source_ip": "10.0.0.6",
-      "severity": "medium",
-      "details": {
-        "packet_count": 51
-      },
-      "mitigated": false
-    },
-    {
-      "timestamp": "2026-07-08T14:53:21.376431",
-      "attack_type": "ICMP_FLOOD",
-      "source_ip": "10.0.0.7",
-      "severity": "medium",
-      "details": {
-        "packet_count": 51
-      },
-      "mitigated": false
-    },
-    {
-      "timestamp": "2026-07-08T14:53:55.427059",
-      "attack_type": "SYN_FLOOD",
+      "timestamp": "2026-07-25T18:46:05.099821",
+      "attack_type": "HTTP_FLOOD",
       "source_ip": "10.0.0.6",
       "severity": "high",
       "details": {
-        "syn_count": 101,
+        "request_count": 301,
         "target_port": 80
       },
       "mitigated": true
     },
     {
-      "timestamp": "2026-07-08T14:54:38.560073",
-      "attack_type": "SYN_FLOOD",
-      "source_ip": "10.0.0.12",
+      "timestamp": "2026-07-25T18:46:06.704636",
+      "attack_type": "UDP_FLOOD",
+      "source_ip": "10.0.0.19",
       "severity": "high",
       "details": {
-        "syn_count": 101,
-        "target_port": 80
+        "packet_count": 501,
+        "target_port": 53,
+        "packet_size": 1043
       },
       "mitigated": true
     }
   ],
   "defense_history": [
     {
-      "timestamp": "2026-07-08T14:47:20.024881",
+      "timestamp": "2026-07-25T18:45:59.344676",
+      "action_type": "BLACKLIST",
+      "target_ip": "10.0.0.9",
+      "reason": "SYN_FLOOD",
+      "duration": 600,
+      "success": true
+    },
+    {
+      "timestamp": "2026-07-25T18:45:59.501422",
+      "action_type": "BLACKLIST",
+      "target_ip": "10.0.0.4",
+      "reason": "HTTP_FLOOD",
+      "duration": 600,
+      "success": true
+    },
+    {
+      "timestamp": "2026-07-25T18:45:59.879836",
+      "action_type": "BLACKLIST",
+      "target_ip": "10.0.0.16",
+      "reason": "UDP_FLOOD",
+      "duration": 600,
+      "success": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:00.093130",
+      "action_type": "BLACKLIST",
+      "target_ip": "10.0.0.13",
+      "reason": "SYN_FLOOD",
+      "duration": 600,
+      "success": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:00.554102",
+      "action_type": "BLACKLIST",
+      "target_ip": "10.0.0.3",
+      "reason": "UDP_FLOOD",
+      "duration": 600,
+      "success": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:00.855003",
+      "action_type": "BLACKLIST",
+      "target_ip": "10.0.0.18",
+      "reason": "UDP_FLOOD",
+      "duration": 600,
+      "success": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:01.163117",
+      "action_type": "BLACKLIST",
+      "target_ip": "10.0.0.14",
+      "reason": "UDP_FLOOD",
+      "duration": 600,
+      "success": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:01.406675",
+      "action_type": "BLACKLIST",
+      "target_ip": "10.0.0.12",
+      "reason": "HTTP_FLOOD",
+      "duration": 600,
+      "success": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:01.735541",
+      "action_type": "BLACKLIST",
+      "target_ip": "10.0.0.5",
+      "reason": "UDP_FLOOD",
+      "duration": 600,
+      "success": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:02.136415",
+      "action_type": "BLACKLIST",
+      "target_ip": "10.0.0.7",
+      "reason": "SYN_FLOOD",
+      "duration": 600,
+      "success": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:02.314386",
+      "action_type": "BLACKLIST",
+      "target_ip": "10.0.0.10",
+      "reason": "UDP_FLOOD",
+      "duration": 600,
+      "success": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:02.421098",
+      "action_type": "BLACKLIST",
+      "target_ip": "10.0.0.17",
+      "reason": "SYN_FLOOD",
+      "duration": 600,
+      "success": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:02.519841",
+      "action_type": "BLACKLIST",
+      "target_ip": "10.0.0.11",
+      "reason": "HTTP_FLOOD",
+      "duration": 600,
+      "success": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:03.013616",
+      "action_type": "BLACKLIST",
+      "target_ip": "10.0.0.8",
+      "reason": "SYN_FLOOD",
+      "duration": 600,
+      "success": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:03.957160",
+      "action_type": "BLACKLIST",
+      "target_ip": "10.0.0.1",
+      "reason": "UDP_FLOOD",
+      "duration": 600,
+      "success": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:04.062902",
+      "action_type": "BLACKLIST",
+      "target_ip": "10.0.0.2",
+      "reason": "HTTP_FLOOD",
+      "duration": 600,
+      "success": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:05.044707",
       "action_type": "BLACKLIST",
       "target_ip": "10.0.0.15",
       "reason": "SYN_FLOOD",
@@ -285,50 +513,18 @@
       "success": true
     },
     {
-      "timestamp": "2026-07-08T14:47:36.572087",
-      "action_type": "BLACKLIST",
-      "target_ip": "10.0.0.11",
-      "reason": "SYN_FLOOD",
-      "duration": 600,
-      "success": true
-    },
-    {
-      "timestamp": "2026-07-08T14:48:16.850090",
-      "action_type": "BLACKLIST",
-      "target_ip": "10.0.0.1",
-      "reason": "SYN_FLOOD",
-      "duration": 600,
-      "success": true
-    },
-    {
-      "timestamp": "2026-07-08T14:49:52.347531",
-      "action_type": "BLACKLIST",
-      "target_ip": "10.0.0.18",
-      "reason": "SYN_FLOOD",
-      "duration": 600,
-      "success": true
-    },
-    {
-      "timestamp": "2026-07-08T14:49:59.027825",
-      "action_type": "BLACKLIST",
-      "target_ip": "10.0.0.3",
-      "reason": "SYN_FLOOD",
-      "duration": 600,
-      "success": true
-    },
-    {
-      "timestamp": "2026-07-08T14:53:55.449382",
+      "timestamp": "2026-07-25T18:46:05.100271",
       "action_type": "BLACKLIST",
       "target_ip": "10.0.0.6",
-      "reason": "SYN_FLOOD",
+      "reason": "HTTP_FLOOD",
       "duration": 600,
       "success": true
     },
     {
-      "timestamp": "2026-07-08T14:54:38.586463",
+      "timestamp": "2026-07-25T18:46:06.705242",
       "action_type": "BLACKLIST",
-      "target_ip": "10.0.0.12",
-      "reason": "SYN_FLOOD",
+      "target_ip": "10.0.0.19",
+      "reason": "UDP_FLOOD",
       "duration": 600,
       "success": true
     }
@@ -347,46 +543,118 @@
   },
   "blacklist_entries": [
     {
-      "ip": "10.0.0.15",
+      "ip": "10.0.0.9",
       "reason": "SYN_FLOOD",
       "severity": "high",
-      "hit_count": 534
+      "hit_count": 5583
     },
     {
-      "ip": "10.0.0.11",
-      "reason": "SYN_FLOOD",
+      "ip": "10.0.0.4",
+      "reason": "HTTP_FLOOD",
       "severity": "high",
-      "hit_count": 615
+      "hit_count": 2715
     },
     {
-      "ip": "10.0.0.1",
-      "reason": "SYN_FLOOD",
+      "ip": "10.0.0.16",
+      "reason": "UDP_FLOOD",
       "severity": "high",
-      "hit_count": 426
+      "hit_count": 3855
     },
     {
-      "ip": "10.0.0.18",
+      "ip": "10.0.0.13",
       "reason": "SYN_FLOOD",
       "severity": "high",
-      "hit_count": 362
+      "hit_count": 2870
     },
     {
       "ip": "10.0.0.3",
-      "reason": "SYN_FLOOD",
+      "reason": "UDP_FLOOD",
       "severity": "high",
-      "hit_count": 510
+      "hit_count": 6089
     },
     {
-      "ip": "10.0.0.6",
-      "reason": "SYN_FLOOD",
+      "ip": "10.0.0.18",
+      "reason": "UDP_FLOOD",
       "severity": "high",
-      "hit_count": 23
+      "hit_count": 4214
+    },
+    {
+      "ip": "10.0.0.14",
+      "reason": "UDP_FLOOD",
+      "severity": "high",
+      "hit_count": 7426
     },
     {
       "ip": "10.0.0.12",
+      "reason": "HTTP_FLOOD",
+      "severity": "high",
+      "hit_count": 8593
+    },
+    {
+      "ip": "10.0.0.5",
+      "reason": "UDP_FLOOD",
+      "severity": "high",
+      "hit_count": 6093
+    },
+    {
+      "ip": "10.0.0.7",
       "reason": "SYN_FLOOD",
       "severity": "high",
-      "hit_count": 20
+      "hit_count": 8383
+    },
+    {
+      "ip": "10.0.0.10",
+      "reason": "UDP_FLOOD",
+      "severity": "high",
+      "hit_count": 7610
+    },
+    {
+      "ip": "10.0.0.17",
+      "reason": "SYN_FLOOD",
+      "severity": "high",
+      "hit_count": 6491
+    },
+    {
+      "ip": "10.0.0.11",
+      "reason": "HTTP_FLOOD",
+      "severity": "high",
+      "hit_count": 6394
+    },
+    {
+      "ip": "10.0.0.8",
+      "reason": "SYN_FLOOD",
+      "severity": "high",
+      "hit_count": 3760
+    },
+    {
+      "ip": "10.0.0.1",
+      "reason": "UDP_FLOOD",
+      "severity": "high",
+      "hit_count": 3751
+    },
+    {
+      "ip": "10.0.0.2",
+      "reason": "HTTP_FLOOD",
+      "severity": "high",
+      "hit_count": 5050
+    },
+    {
+      "ip": "10.0.0.15",
+      "reason": "SYN_FLOOD",
+      "severity": "high",
+      "hit_count": 5885
+    },
+    {
+      "ip": "10.0.0.6",
+      "reason": "HTTP_FLOOD",
+      "severity": "high",
+      "hit_count": 2877
+    },
+    {
+      "ip": "10.0.0.19",
+      "reason": "UDP_FLOOD",
+      "severity": "high",
+      "hit_count": 6772
     }
   ]
 }

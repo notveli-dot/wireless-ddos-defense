@@ -1,0 +1,208 @@
+{
+  "timestamp": "2026-07-25T18:50:43.876348",
+  "running": true,
+  "statistics": {
+    "uptime_seconds": 284,
+    "total_packets": 10854,
+    "total_bytes": 7094454,
+    "packets_per_second": 38.139249947001495,
+    "attacks_detected": 31,
+    "packets_dropped": 104411,
+    "ips_blocked": 19,
+    "active_flows": 3679,
+    "unique_sources": 67,
+    "blacklist_size": 19
+  },
+  "ml_status": {
+    "enabled": true,
+    "training_mode": false,
+    "models_trained": {
+      "random_forest": true,
+      "svm": true,
+      "isolation_forest": true,
+      "xgboost": true
+    },
+    "training_samples": 1000,
+    "samples_needed": 1000
+  },
+  "top_attackers": [
+    {
+      "ip": "10.0.0.19",
+      "packets": 696,
+      "bytes": 401033,
+      "blacklisted": true
+    },
+    {
+      "ip": "10.0.0.16",
+      "packets": 649,
+      "bytes": 388938,
+      "blacklisted": true
+    },
+    {
+      "ip": "10.0.0.10",
+      "packets": 630,
+      "bytes": 414138,
+      "blacklisted": true
+    },
+    {
+      "ip": "10.0.0.14",
+      "packets": 583,
+      "bytes": 404729,
+      "blacklisted": true
+    },
+    {
+      "ip": "10.0.0.3",
+      "packets": 501,
+      "bytes": 400382,
+      "blacklisted": true
+    },
+    {
+      "ip": "10.0.0.18",
+      "packets": 501,
+      "bytes": 388014,
+      "blacklisted": true
+    },
+    {
+      "ip": "10.0.0.5",
+      "packets": 501,
+      "bytes": 390401,
+      "blacklisted": true
+    },
+    {
+      "ip": "10.0.0.1",
+      "packets": 501,
+      "bytes": 404314,
+      "blacklisted": true
+    },
+    {
+      "ip": "10.0.0.6",
+      "packets": 432,
+      "bytes": 162198,
+      "blacklisted": true
+    },
+    {
+      "ip": "10.0.0.12",
+      "packets": 391,
+      "bytes": 159908,
+      "blacklisted": true
+    }
+  ],
+  "recent_detections": [
+    {
+      "timestamp": "2026-07-25T18:46:02.519539",
+      "attack_type": "HTTP_FLOOD",
+      "source_ip": "10.0.0.11",
+      "severity": "high",
+      "details": {
+        "request_count": 301,
+        "target_port": 80
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:02.933888",
+      "attack_type": "ICMP_FLOOD",
+      "source_ip": "10.0.0.19",
+      "severity": "medium",
+      "details": {
+        "packet_count": 51
+      },
+      "mitigated": false
+    },
+    {
+      "timestamp": "2026-07-25T18:46:02.937090",
+      "attack_type": "ICMP_FLOOD",
+      "source_ip": "10.0.0.19",
+      "severity": "medium",
+      "details": {
+        "packet_count": 51
+      },
+      "mitigated": false
+    },
+    {
+      "timestamp": "2026-07-25T18:46:02.951182",
+      "attack_type": "ICMP_FLOOD",
+      "source_ip": "10.0.0.19",
+      "severity": "medium",
+      "details": {
+        "packet_count": 51
+      },
+      "mitigated": false
+    },
+    {
+      "timestamp": "2026-07-25T18:46:03.013084",
+      "attack_type": "SYN_FLOOD",
+      "source_ip": "10.0.0.8",
+      "severity": "high",
+      "details": {
+        "syn_count": 101,
+        "target_port": 80
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:03.956786",
+      "attack_type": "UDP_FLOOD",
+      "source_ip": "10.0.0.1",
+      "severity": "high",
+      "details": {
+        "packet_count": 501,
+        "target_port": 443,
+        "packet_size": 345
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:04.059211",
+      "attack_type": "HTTP_FLOOD",
+      "source_ip": "10.0.0.2",
+      "severity": "high",
+      "details": {
+        "request_count": 301,
+        "target_port": 80
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:05.044101",
+      "attack_type": "SYN_FLOOD",
+      "source_ip": "10.0.0.15",
+      "severity": "high",
+      "details": {
+        "syn_count": 101,
+        "target_port": 80
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:05.099821",
+      "attack_type": "HTTP_FLOOD",
+      "source_ip": "10.0.0.6",
+      "severity": "high",
+      "details": {
+        "request_count": 301,
+        "target_port": 80
+      },
+      "mitigated": true
+    },
+    {
+      "timestamp": "2026-07-25T18:46:06.704636",
+      "attack_type": "UDP_FLOOD",
+      "source_ip": "10.0.0.19",
+      "severity": "high",
+      "details": {
+        "packet_count": 501,
+        "target_port": 53,
+        "packet_size": 1043
+      },
+      "mitigated": true
+    }
+  ],
+  "blacklist_size": 19,
+  "config": {
+    "interface": "wlan0",
+    "ml_enabled": true,
+    "syn_threshold": 100,
+    "udp_threshold": 500
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-07-25T18:46:02.519851",
+  "source_ip": "10.0.0.11",
+  "attack_type": "HTTP_FLOOD",
+  "severity": "high",
+  "system_stats": {
+    "uptime_seconds": 3,
+    "total_packets": 5338,
+    "total_bytes": 3199425,
+    "packets_per_second": 1651.436960562208,
+    "attacks_detected": 22,
+    "packets_dropped": 5823,
+    "ips_blocked": 13,
+    "active_flows": 401,
+    "unique_sources": 63,
+    "blacklist_size": 13
+  }
+}
